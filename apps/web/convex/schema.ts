@@ -30,6 +30,9 @@ export default defineSchema({
     .index("by_category", ["category"])
     .index("by_complexity", ["complexity"]),
   controlPlaneEvents: defineTable({
+    tenantId: v.string(),
+    orgId: v.optional(v.union(v.string(), v.null())),
+    workspaceId: v.string(),
     eventId: v.string(),
     sequence: v.number(),
     eventType: v.string(),
@@ -42,10 +45,37 @@ export default defineSchema({
     source: v.string(),
     sentAt: v.optional(v.string()),
     receivedAt: v.number(),
-    event: v.any(),
+    eventStorageMode: v.union(v.literal("raw"), v.literal("redacted")),
+    eventProjection: v.optional(
+      v.object({
+        payloadKind: v.union(
+          v.literal("null"),
+          v.literal("boolean"),
+          v.literal("number"),
+          v.literal("string"),
+          v.literal("array"),
+          v.literal("object"),
+          v.literal("unknown"),
+        ),
+        payloadSize: v.optional(v.number()),
+        metadataKind: v.union(
+          v.literal("null"),
+          v.literal("boolean"),
+          v.literal("number"),
+          v.literal("string"),
+          v.literal("array"),
+          v.literal("object"),
+          v.literal("unknown"),
+        ),
+        metadataSize: v.optional(v.number()),
+      }),
+    ),
+    event: v.optional(v.any()),
   })
-    .index("by_event_id", ["eventId"])
+    .index("by_tenant_event_id", ["tenantId", "eventId"])
     .index("by_sequence", ["sequence"])
-    .index("by_aggregate", ["aggregateKind", "aggregateId", "sequence"])
-    .index("by_type_sequence", ["eventType", "sequence"]),
+    .index("by_tenant_sequence", ["tenantId", "sequence"])
+    .index("by_workspace_sequence", ["tenantId", "workspaceId", "sequence"])
+    .index("by_aggregate", ["tenantId", "aggregateKind", "aggregateId", "sequence"])
+    .index("by_type_sequence", ["tenantId", "eventType", "sequence"]),
 });
