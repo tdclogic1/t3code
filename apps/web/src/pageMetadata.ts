@@ -1,4 +1,9 @@
-export type PageMetadataKey = "chatHome" | "chatThread" | "settings" | "smeApps";
+export type PageMetadataKey =
+  | "chatHome"
+  | "chatThread"
+  | "settings"
+  | "smeApps"
+  | "salesSkills";
 
 export interface PageMetadataEntry {
   readonly title: string;
@@ -58,12 +63,26 @@ export const PAGE_METADATA: Record<PageMetadataKey, PageMetadataEntry> = {
       "How should we prioritize these app builds?",
     ],
   },
+  salesSkills: {
+    title: "Sales AI Skills | DrBios",
+    description: "Catalog of 100 build-ready AI sales skills for business teams.",
+    summary:
+      "Structured catalog of AI sales skills with practical specs for building prospecting, qualification, forecasting, and expansion workflows.",
+    topics: ["sales automation", "revenue operations", "AI skills", "sales workflows"],
+    skills: ["sales system design", "workflow automation", "MVP scoping", "revenue tooling"],
+    likelyQuestions: [
+      "Which sales AI skills are quickest to launch first?",
+      "How should we group these skills by sales workflow?",
+      "What inputs, integrations, and guardrails does each skill need?",
+    ],
+  },
 };
 
 const PATH_TO_METADATA_KEY: Record<string, PageMetadataKey> = {
   "/": "chatHome",
   "/settings": "settings",
   "/sme-apps": "smeApps",
+  "/sales-skills": "salesSkills",
 };
 
 export function resolvePageMetadataKey(pathname: string): PageMetadataKey | null {

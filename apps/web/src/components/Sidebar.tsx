@@ -1351,7 +1351,16 @@ export default function Sidebar() {
             + Add project
           </button>
         )}
-        <div className="mt-2 grid grid-cols-2 gap-2">
+        <div className="mt-2 grid grid-cols-3 gap-2">
+          <button
+            type="button"
+            className="rounded-md border border-border px-2 py-1.5 text-[11px] text-muted-foreground transition-colors duration-150 hover:bg-secondary hover:text-foreground"
+            onClick={() => {
+              void navigate({ to: "/sales-skills" });
+            }}
+          >
+            Sales AI
+          </button>
           <button
             type="button"
             className="rounded-md border border-border px-2 py-1.5 text-[11px] text-muted-foreground transition-colors duration-150 hover:bg-secondary hover:text-foreground"
