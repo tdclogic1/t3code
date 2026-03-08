@@ -13,7 +13,7 @@ import { Route as ChatRouteImport } from './routes/_chat'
 import { Route as ChatIndexRouteImport } from './routes/_chat.index'
 import { Route as ChatSmeAppsRouteImport } from './routes/_chat.sme-apps'
 import { Route as ChatSettingsRouteImport } from './routes/_chat.settings'
-import { Route as ChatSalesSkillsRouteImport } from './routes/_chat.sales-skills'
+import { Route as ChatBusinessSkillsRouteImport } from './routes/_chat.business-skills'
 import { Route as ChatThreadIdRouteImport } from './routes/_chat.$threadId'
 
 const ChatRoute = ChatRouteImport.update({
@@ -35,9 +35,9 @@ const ChatSettingsRoute = ChatSettingsRouteImport.update({
   path: '/settings',
   getParentRoute: () => ChatRoute,
 } as any)
-const ChatSalesSkillsRoute = ChatSalesSkillsRouteImport.update({
-  id: '/sales-skills',
-  path: '/sales-skills',
+const ChatBusinessSkillsRoute = ChatBusinessSkillsRouteImport.update({
+  id: '/business-skills',
+  path: '/business-skills',
   getParentRoute: () => ChatRoute,
 } as any)
 const ChatThreadIdRoute = ChatThreadIdRouteImport.update({
@@ -49,13 +49,13 @@ const ChatThreadIdRoute = ChatThreadIdRouteImport.update({
 export interface FileRoutesByFullPath {
   '/': typeof ChatIndexRoute
   '/$threadId': typeof ChatThreadIdRoute
-  '/sales-skills': typeof ChatSalesSkillsRoute
+  '/business-skills': typeof ChatBusinessSkillsRoute
   '/settings': typeof ChatSettingsRoute
   '/sme-apps': typeof ChatSmeAppsRoute
 }
 export interface FileRoutesByTo {
   '/$threadId': typeof ChatThreadIdRoute
-  '/sales-skills': typeof ChatSalesSkillsRoute
+  '/business-skills': typeof ChatBusinessSkillsRoute
   '/settings': typeof ChatSettingsRoute
   '/sme-apps': typeof ChatSmeAppsRoute
   '/': typeof ChatIndexRoute
@@ -64,21 +64,21 @@ export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/_chat': typeof ChatRouteWithChildren
   '/_chat/$threadId': typeof ChatThreadIdRoute
-  '/_chat/sales-skills': typeof ChatSalesSkillsRoute
+  '/_chat/business-skills': typeof ChatBusinessSkillsRoute
   '/_chat/settings': typeof ChatSettingsRoute
   '/_chat/sme-apps': typeof ChatSmeAppsRoute
   '/_chat/': typeof ChatIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/$threadId' | '/sales-skills' | '/settings' | '/sme-apps'
+  fullPaths: '/' | '/$threadId' | '/business-skills' | '/settings' | '/sme-apps'
   fileRoutesByTo: FileRoutesByTo
-  to: '/$threadId' | '/sales-skills' | '/settings' | '/sme-apps' | '/'
+  to: '/$threadId' | '/business-skills' | '/settings' | '/sme-apps' | '/'
   id:
     | '__root__'
     | '/_chat'
     | '/_chat/$threadId'
-    | '/_chat/sales-skills'
+    | '/_chat/business-skills'
     | '/_chat/settings'
     | '/_chat/sme-apps'
     | '/_chat/'
@@ -118,11 +118,11 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ChatSettingsRouteImport
       parentRoute: typeof ChatRoute
     }
-    '/_chat/sales-skills': {
-      id: '/_chat/sales-skills'
-      path: '/sales-skills'
-      fullPath: '/sales-skills'
-      preLoaderRoute: typeof ChatSalesSkillsRouteImport
+    '/_chat/business-skills': {
+      id: '/_chat/business-skills'
+      path: '/business-skills'
+      fullPath: '/business-skills'
+      preLoaderRoute: typeof ChatBusinessSkillsRouteImport
       parentRoute: typeof ChatRoute
     }
     '/_chat/$threadId': {
@@ -137,7 +137,7 @@ declare module '@tanstack/react-router' {
 
 interface ChatRouteChildren {
   ChatThreadIdRoute: typeof ChatThreadIdRoute
-  ChatSalesSkillsRoute: typeof ChatSalesSkillsRoute
+  ChatBusinessSkillsRoute: typeof ChatBusinessSkillsRoute
   ChatSettingsRoute: typeof ChatSettingsRoute
   ChatSmeAppsRoute: typeof ChatSmeAppsRoute
   ChatIndexRoute: typeof ChatIndexRoute
@@ -145,7 +145,7 @@ interface ChatRouteChildren {
 
 const ChatRouteChildren: ChatRouteChildren = {
   ChatThreadIdRoute: ChatThreadIdRoute,
-  ChatSalesSkillsRoute: ChatSalesSkillsRoute,
+  ChatBusinessSkillsRoute: ChatBusinessSkillsRoute,
   ChatSettingsRoute: ChatSettingsRoute,
   ChatSmeAppsRoute: ChatSmeAppsRoute,
   ChatIndexRoute: ChatIndexRoute,

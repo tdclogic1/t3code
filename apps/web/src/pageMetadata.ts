@@ -3,7 +3,7 @@ export type PageMetadataKey =
   | "chatThread"
   | "settings"
   | "smeApps"
-  | "salesSkills";
+  | "businessSkills";
 
 export interface PageMetadataEntry {
   readonly title: string;
@@ -63,17 +63,17 @@ export const PAGE_METADATA: Record<PageMetadataKey, PageMetadataEntry> = {
       "How should we prioritize these app builds?",
     ],
   },
-  salesSkills: {
-    title: "Sales AI Skills | DrBios",
-    description: "Catalog of 100 build-ready AI sales skills for business teams.",
+  businessSkills: {
+    title: "Business Function AI Skills | DrBios",
+    description: "Business-function map for AI skills across sales, operations, finance, IT, and more.",
     summary:
-      "Structured catalog of AI sales skills with practical specs for building prospecting, qualification, forecasting, and expansion workflows.",
-    topics: ["sales automation", "revenue operations", "AI skills", "sales workflows"],
-    skills: ["sales system design", "workflow automation", "MVP scoping", "revenue tooling"],
+      "Business-function planning surface that maps major categories, missing functional areas, and build tasks for future AI skill libraries.",
+    topics: ["business functions", "AI skills", "workflow automation", "operating systems"],
+    skills: ["taxonomy design", "workflow mapping", "MVP scoping", "business systems planning"],
     likelyQuestions: [
-      "Which sales AI skills are quickest to launch first?",
-      "How should we group these skills by sales workflow?",
-      "What inputs, integrations, and guardrails does each skill need?",
+      "Which business functions should we build after sales?",
+      "What major categories are missing from the function map?",
+      "What task list should we follow to build skills in each category?",
     ],
   },
 };
@@ -82,7 +82,7 @@ const PATH_TO_METADATA_KEY: Record<string, PageMetadataKey> = {
   "/": "chatHome",
   "/settings": "settings",
   "/sme-apps": "smeApps",
-  "/sales-skills": "salesSkills",
+  "/business-skills": "businessSkills",
 };
 
 export function resolvePageMetadataKey(pathname: string): PageMetadataKey | null {
