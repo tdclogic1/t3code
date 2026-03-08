@@ -4,8 +4,13 @@ import { Suspense, lazy, type ReactNode, useCallback, useEffect } from "react";
 
 import ChatView from "../components/ChatView";
 import { useComposerDraftStore } from "../composerDraftStore";
-import { parseDiffRouteSearch, stripDiffSearchParams } from "../diffRouteSearch";
+import {
+  type DiffRouteSearch,
+  parseDiffRouteSearch,
+  stripDiffSearchParams,
+} from "../diffRouteSearch";
 import { useMediaQuery } from "../hooks/useMediaQuery";
+import { headMetaForPage } from "../pageMetadata";
 import { useStore } from "../store";
 import { Sheet, SheetPopup } from "../components/ui/sheet";
 import { Sidebar, SidebarInset, SidebarProvider, SidebarRail } from "~/components/ui/sidebar";
@@ -138,7 +143,7 @@ function ChatThreadRouteView() {
   const threadId = Route.useParams({
     select: (params) => ThreadId.makeUnsafe(params.threadId),
   });
-  const search = Route.useSearch();
+  const search = Route.useSearch() as DiffRouteSearch;
   const threadExists = useStore((store) => store.threads.some((thread) => thread.id === threadId));
   const draftThreadExists = useComposerDraftStore(
     (store) => Object.hasOwn(store.draftThreadsByThreadId, threadId),
@@ -207,6 +212,9 @@ function ChatThreadRouteView() {
 }
 
 export const Route = createFileRoute("/_chat/$threadId")({
+  head: () => ({
+    meta: headMetaForPage("chatThread"),
+  }),
   validateSearch: (search) => parseDiffRouteSearch(search),
   component: ChatThreadRouteView,
 });

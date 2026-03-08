@@ -15,6 +15,7 @@ import { isElectron } from "../env";
 import { useTheme } from "../hooks/useTheme";
 import { serverConfigQueryOptions } from "../lib/serverReactQuery";
 import { ensureNativeApi } from "../nativeApi";
+import { headMetaForPage } from "../pageMetadata";
 import { preferredTerminalEditor } from "../terminal-links";
 import { Button } from "../components/ui/button";
 import { Input } from "../components/ui/input";
@@ -605,5 +606,8 @@ function SettingsRouteView() {
 }
 
 export const Route = createFileRoute("/_chat/settings")({
+  head: () => ({
+    meta: headMetaForPage("settings"),
+  }),
   component: SettingsRouteView,
 });

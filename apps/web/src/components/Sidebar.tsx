@@ -63,6 +63,7 @@ import { isNonEmpty as isNonEmptyString } from "effect/String";
 
 const EMPTY_KEYBINDINGS: ResolvedKeybindingsConfig = [];
 const THREAD_PREVIEW_LIMIT = 6;
+const CURRENT_YEAR = new Date().getFullYear();
 
 async function copyTextToClipboard(text: string): Promise<void> {
   if (typeof navigator === "undefined" || navigator.clipboard?.writeText === undefined) {
@@ -1350,6 +1351,30 @@ export default function Sidebar() {
             + Add project
           </button>
         )}
+        <div className="mt-2 grid grid-cols-2 gap-2">
+          <button
+            type="button"
+            className="rounded-md border border-border px-2 py-1.5 text-[11px] text-muted-foreground transition-colors duration-150 hover:bg-secondary hover:text-foreground"
+            onClick={() => {
+              void navigate({ to: "/sme-apps" });
+            }}
+          >
+            SME apps
+          </button>
+          <button
+            type="button"
+            className="rounded-md border border-border px-2 py-1.5 text-[11px] text-muted-foreground transition-colors duration-150 hover:bg-secondary hover:text-foreground"
+            onClick={() => {
+              void navigate({ to: "/settings" });
+            }}
+          >
+            Settings
+          </button>
+        </div>
+        <div className="mt-3 text-center text-[10px] text-muted-foreground/75">
+          <p>Copyright © {CURRENT_YEAR} DrBios. All rights reserved.</p>
+          <p>Created by DrBios.</p>
+        </div>
       </SidebarFooter>
     </>
   );

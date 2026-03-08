@@ -11,6 +11,7 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as ChatRouteImport } from './routes/_chat'
 import { Route as ChatIndexRouteImport } from './routes/_chat.index'
+import { Route as ChatSmeAppsRouteImport } from './routes/_chat.sme-apps'
 import { Route as ChatSettingsRouteImport } from './routes/_chat.settings'
 import { Route as ChatThreadIdRouteImport } from './routes/_chat.$threadId'
 
@@ -21,6 +22,11 @@ const ChatRoute = ChatRouteImport.update({
 const ChatIndexRoute = ChatIndexRouteImport.update({
   id: '/',
   path: '/',
+  getParentRoute: () => ChatRoute,
+} as any)
+const ChatSmeAppsRoute = ChatSmeAppsRouteImport.update({
+  id: '/sme-apps',
+  path: '/sme-apps',
   getParentRoute: () => ChatRoute,
 } as any)
 const ChatSettingsRoute = ChatSettingsRouteImport.update({
@@ -38,10 +44,12 @@ export interface FileRoutesByFullPath {
   '/': typeof ChatIndexRoute
   '/$threadId': typeof ChatThreadIdRoute
   '/settings': typeof ChatSettingsRoute
+  '/sme-apps': typeof ChatSmeAppsRoute
 }
 export interface FileRoutesByTo {
   '/$threadId': typeof ChatThreadIdRoute
   '/settings': typeof ChatSettingsRoute
+  '/sme-apps': typeof ChatSmeAppsRoute
   '/': typeof ChatIndexRoute
 }
 export interface FileRoutesById {
@@ -49,14 +57,21 @@ export interface FileRoutesById {
   '/_chat': typeof ChatRouteWithChildren
   '/_chat/$threadId': typeof ChatThreadIdRoute
   '/_chat/settings': typeof ChatSettingsRoute
+  '/_chat/sme-apps': typeof ChatSmeAppsRoute
   '/_chat/': typeof ChatIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/$threadId' | '/settings'
+  fullPaths: '/' | '/$threadId' | '/settings' | '/sme-apps'
   fileRoutesByTo: FileRoutesByTo
-  to: '/$threadId' | '/settings' | '/'
-  id: '__root__' | '/_chat' | '/_chat/$threadId' | '/_chat/settings' | '/_chat/'
+  to: '/$threadId' | '/settings' | '/sme-apps' | '/'
+  id:
+    | '__root__'
+    | '/_chat'
+    | '/_chat/$threadId'
+    | '/_chat/settings'
+    | '/_chat/sme-apps'
+    | '/_chat/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -79,6 +94,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ChatIndexRouteImport
       parentRoute: typeof ChatRoute
     }
+    '/_chat/sme-apps': {
+      id: '/_chat/sme-apps'
+      path: '/sme-apps'
+      fullPath: '/sme-apps'
+      preLoaderRoute: typeof ChatSmeAppsRouteImport
+      parentRoute: typeof ChatRoute
+    }
     '/_chat/settings': {
       id: '/_chat/settings'
       path: '/settings'
@@ -99,12 +121,14 @@ declare module '@tanstack/react-router' {
 interface ChatRouteChildren {
   ChatThreadIdRoute: typeof ChatThreadIdRoute
   ChatSettingsRoute: typeof ChatSettingsRoute
+  ChatSmeAppsRoute: typeof ChatSmeAppsRoute
   ChatIndexRoute: typeof ChatIndexRoute
 }
 
 const ChatRouteChildren: ChatRouteChildren = {
   ChatThreadIdRoute: ChatThreadIdRoute,
   ChatSettingsRoute: ChatSettingsRoute,
+  ChatSmeAppsRoute: ChatSmeAppsRoute,
   ChatIndexRoute: ChatIndexRoute,
 }
 

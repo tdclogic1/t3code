@@ -1,6 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 
 import { isElectron } from "../env";
+import { headMetaForPage } from "../pageMetadata";
 import { SidebarTrigger } from "../components/ui/sidebar";
 
 function ChatIndexRouteView() {
@@ -31,5 +32,8 @@ function ChatIndexRouteView() {
 }
 
 export const Route = createFileRoute("/_chat/")({
+  head: () => ({
+    meta: headMetaForPage("chatHome"),
+  }),
   component: ChatIndexRouteView,
 });

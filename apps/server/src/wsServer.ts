@@ -106,6 +106,12 @@ const isServerNotRunningError = (error: unknown): boolean => {
   );
 };
 
+const ROBOTS_DIRECTIVES =
+  "noindex, nofollow, noarchive, nosnippet, noimageindex, noai, noimageai";
+const ROBOTS_HEADERS: Record<string, string> = {
+  "X-Robots-Tag": ROBOTS_DIRECTIVES,
+};
+
 function rejectUpgrade(socket: Duplex, statusCode: number, message: string): void {
   socket.end(
     `HTTP/1.1 ${statusCode} ${statusCode === 401 ? "Unauthorized" : "Bad Request"}\r\n` +
@@ -427,7 +433,7 @@ export const createServer = Effect.fn(function* (): Effect.fn.Return<
       headers: Record<string, string>,
       body?: string | Uint8Array,
     ) => {
-      res.writeHead(statusCode, headers);
+      res.writeHead(statusCode, { ...ROBOTS_HEADERS, ...headers });
       res.end(body);
     };
 
@@ -476,6 +482,7 @@ export const createServer = Effect.fn(function* (): Effect.fn.Return<
 
           const contentType = Mime.getType(filePath) ?? "application/octet-stream";
           res.writeHead(200, {
+            ...ROBOTS_HEADERS,
             "Content-Type": contentType,
             "Cache-Control": "public, max-age=31536000, immutable",
           });
@@ -495,6 +502,11 @@ export const createServer = Effect.fn(function* (): Effect.fn.Return<
           if (!res.writableEnded) {
             res.end();
           }
+          return;
+        }
+
+        if (url.pathname === "/robots.txt") {
+          respond(200, { "Content-Type": "text/plain; charset=utf-8" }, "User-agent: *\nDisallow: /\n");
           return;
         }
 

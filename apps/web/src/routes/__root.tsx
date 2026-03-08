@@ -14,6 +14,7 @@ import { Button } from "../components/ui/button";
 import { AnchoredToastProvider, ToastProvider, toastManager } from "../components/ui/toast";
 import { serverConfigQueryOptions, serverQueryKeys } from "../lib/serverReactQuery";
 import { readNativeApi } from "../nativeApi";
+import { resolvePageMetadata } from "../pageMetadata";
 import { useComposerDraftStore } from "../composerDraftStore";
 import { useStore } from "../store";
 import { useTerminalStateStore } from "../terminalStateStore";
@@ -29,7 +30,20 @@ export const Route = createRootRouteWithContext<{
   component: RootRouteView,
   errorComponent: RootRouteErrorView,
   head: () => ({
-    meta: [{ name: "title", content: APP_DISPLAY_NAME }],
+    meta: [
+      { title: APP_DISPLAY_NAME },
+      { name: "author", content: "DrBios" },
+      { name: "creator", content: "DrBios" },
+      { name: "publisher", content: "DrBios" },
+      {
+        name: "robots",
+        content: "noindex, nofollow, noarchive, nosnippet, noimageindex, noai, noimageai",
+      },
+      {
+        name: "googlebot",
+        content: "noindex, nofollow, noarchive, nosnippet, noimageindex",
+      },
+    ],
   }),
 });
 
@@ -51,9 +65,34 @@ function RootRouteView() {
       <AnchoredToastProvider>
         <EventRouter />
         <DesktopProjectBootstrap />
+        <PageContextJsonScript />
         <Outlet />
       </AnchoredToastProvider>
     </ToastProvider>
+  );
+}
+
+function PageContextJsonScript() {
+  const pathname = useRouterState({ select: (state) => state.location.pathname });
+  const metadata = resolvePageMetadata(pathname);
+  if (!metadata) {
+    return null;
+  }
+
+  return (
+    <script
+      id="t3-page-context"
+      type="application/json"
+      dangerouslySetInnerHTML={{
+        __html: JSON.stringify({
+          pathname,
+          summary: metadata.summary,
+          topics: metadata.topics,
+          skills: metadata.skills,
+          likelyQuestions: metadata.likelyQuestions,
+        }),
+      }}
+    />
   );
 }
 
