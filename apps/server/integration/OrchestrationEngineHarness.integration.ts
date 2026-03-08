@@ -48,6 +48,7 @@ import { OrchestrationProjectionSnapshotQueryLive } from "../src/orchestration/L
 import { OrchestrationReactorLive } from "../src/orchestration/Layers/OrchestrationReactor.ts";
 import { ProviderCommandReactorLive } from "../src/orchestration/Layers/ProviderCommandReactor.ts";
 import { ProviderRuntimeIngestionLive } from "../src/orchestration/Layers/ProviderRuntimeIngestion.ts";
+import { ControlPlaneSyncReactor } from "../src/orchestration/Services/ControlPlaneSyncReactor.ts";
 import {
   OrchestrationEngineService,
   type OrchestrationEngineShape,
@@ -291,6 +292,11 @@ export const makeOrchestrationIntegrationHarness = (
       Layer.provideMerge(runtimeIngestionLayer),
       Layer.provideMerge(providerCommandReactorLayer),
       Layer.provideMerge(checkpointReactorLayer),
+      Layer.provideMerge(
+        Layer.succeed(ControlPlaneSyncReactor, {
+          start: Effect.void,
+        }),
+      ),
     );
     const layer = orchestrationReactorLayer.pipe(
       Layer.provide(persistenceLayer),

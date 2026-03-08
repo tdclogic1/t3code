@@ -2,6 +2,7 @@ import { Effect, Exit, Layer, ManagedRuntime, Scope } from "effect";
 import { afterEach, describe, expect, it } from "vitest";
 
 import { CheckpointReactor } from "../Services/CheckpointReactor.ts";
+import { ControlPlaneSyncReactor } from "../Services/ControlPlaneSyncReactor.ts";
 import { ProviderCommandReactor } from "../Services/ProviderCommandReactor.ts";
 import { ProviderRuntimeIngestionService } from "../Services/ProviderRuntimeIngestion.ts";
 import { OrchestrationReactor } from "../Services/OrchestrationReactor.ts";
@@ -17,7 +18,7 @@ describe("OrchestrationReactor", () => {
     runtime = null;
   });
 
-  it("starts provider ingestion, provider command, and checkpoint reactors", async () => {
+  it("starts provider ingestion, provider command, checkpoint, and control-plane reactors", async () => {
     const started: string[] = [];
 
     runtime = ManagedRuntime.make(
@@ -43,6 +44,13 @@ describe("OrchestrationReactor", () => {
             }),
           }),
         ),
+        Layer.provideMerge(
+          Layer.succeed(ControlPlaneSyncReactor, {
+            start: Effect.sync(() => {
+              started.push("control-plane-sync-reactor");
+            }),
+          }),
+        ),
       ),
     );
 
@@ -54,6 +62,7 @@ describe("OrchestrationReactor", () => {
       "provider-runtime-ingestion",
       "provider-command-reactor",
       "checkpoint-reactor",
+      "control-plane-sync-reactor",
     ]);
 
     await Effect.runPromise(Scope.close(scope, Exit.void));

@@ -1,5 +1,5 @@
 import type { OrchestrationEvent } from "@t3tools/contracts";
-import { Cause, Effect, Layer, Queue, Stream } from "effect";
+import { Cause, Effect, Layer, Queue, Schema, Stream } from "effect";
 
 import { OrchestrationEngineService } from "../Services/OrchestrationEngine.ts";
 import {
@@ -16,6 +16,14 @@ const DEFAULT_SYNC_TIMEOUT_MS = 5_000;
 const DEFAULT_SYNC_QUEUE_CAPACITY = 2_000;
 const MAX_SYNC_TIMEOUT_MS = 60_000;
 const MAX_SYNC_QUEUE_CAPACITY = 20_000;
+
+class ControlPlaneSyncDeliveryError extends Schema.TaggedErrorClass<ControlPlaneSyncDeliveryError>()(
+  "ControlPlaneSyncDeliveryError",
+  {
+    detail: Schema.String,
+    cause: Schema.optional(Schema.Defect),
+  },
+) {}
 
 function readNonEmptyEnv(name: string): string | undefined {
   const raw = process.env[name];
@@ -45,7 +53,7 @@ function readSyncConfig():
   | {
       readonly enabled: true;
       readonly url: URL;
-      readonly authToken?: string;
+      readonly authToken: string | undefined;
       readonly timeoutMs: number;
       readonly queueCapacity: number;
     } {
@@ -98,10 +106,10 @@ function buildRequestHeaders(authToken: string | undefined): Record<string, stri
 
 function mirrorEventToControlPlane(input: {
   readonly syncUrl: URL;
-  readonly authToken?: string;
+  readonly authToken: string | undefined;
   readonly timeoutMs: number;
   readonly event: OrchestrationEvent;
-}): Effect.Effect<void, unknown> {
+}): Effect.Effect<void, ControlPlaneSyncDeliveryError> {
   return Effect.tryPromise({
     try: async () => {
       const timeoutController = new AbortController();
@@ -135,7 +143,14 @@ function mirrorEventToControlPlane(input: {
         clearTimeout(timeoutHandle);
       }
     },
-    catch: (cause) => cause,
+    catch: (cause) =>
+      new ControlPlaneSyncDeliveryError({
+        detail:
+          cause instanceof Error
+            ? cause.message
+            : `Control-plane sync failed: ${String(cause)}`,
+        cause,
+      }),
   });
 }
 
@@ -208,4 +223,3 @@ const make = Effect.gen(function* () {
 });
 
 export const ControlPlaneSyncReactorLive = Layer.effect(ControlPlaneSyncReactor, make);
-

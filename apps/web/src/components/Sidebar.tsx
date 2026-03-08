@@ -1674,7 +1674,7 @@ export default function Sidebar() {
             + Add project
           </button>
         )}
-        <div className="mt-2 grid grid-cols-3 gap-2">
+        <div className="mt-2 grid grid-cols-4 gap-2">
           <button
             type="button"
             className="rounded-md border border-border px-2 py-1.5 text-[11px] text-muted-foreground transition-colors duration-150 hover:bg-secondary hover:text-foreground"
@@ -1692,6 +1692,15 @@ export default function Sidebar() {
             }}
           >
             SME apps
+          </button>
+          <button
+            type="button"
+            className="rounded-md border border-border px-2 py-1.5 text-[11px] text-muted-foreground transition-colors duration-150 hover:bg-secondary hover:text-foreground"
+            onClick={() => {
+              void navigate({ to: "/kpi-dashboard" });
+            }}
+          >
+            KPI
           </button>
           <button
             type="button"

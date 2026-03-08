@@ -73,6 +73,7 @@ import {
 import { parseBase64DataUrl } from "./imageMime.ts";
 import { AnalyticsService } from "./telemetry/Services/AnalyticsService.ts";
 import { expandHomePath } from "./os-jank.ts";
+import { computeServerKpiSummary } from "./kpiMetrics.ts";
 
 /**
  * ServerShape - Service API for server lifecycle control.
@@ -927,6 +928,17 @@ export const createServer = Effect.fn(function* (): Effect.fn.Return<
           providers: providerStatuses,
           availableEditors,
         };
+
+      case WS_METHODS.serverGetKpiSummary: {
+        const snapshot = yield* projectionReadModelQuery.getSnapshot();
+        return yield* Effect.tryPromise({
+          try: () => computeServerKpiSummary(snapshot),
+          catch: (cause) =>
+            new RouteRequestError({
+              message: `Failed to compute KPI summary: ${String(cause)}`,
+            }),
+        });
+      }
 
       case WS_METHODS.serverUpsertKeybinding: {
         const body = stripRequestTag(request.body);

@@ -29,4 +29,23 @@ export default defineSchema({
     .index("by_slug", ["slug"])
     .index("by_category", ["category"])
     .index("by_complexity", ["complexity"]),
+  controlPlaneEvents: defineTable({
+    eventId: v.string(),
+    sequence: v.number(),
+    eventType: v.string(),
+    aggregateKind: v.string(),
+    aggregateId: v.string(),
+    occurredAt: v.string(),
+    commandId: v.optional(v.union(v.string(), v.null())),
+    causationEventId: v.optional(v.union(v.string(), v.null())),
+    correlationId: v.optional(v.union(v.string(), v.null())),
+    source: v.string(),
+    sentAt: v.optional(v.string()),
+    receivedAt: v.number(),
+    event: v.any(),
+  })
+    .index("by_event_id", ["eventId"])
+    .index("by_sequence", ["sequence"])
+    .index("by_aggregate", ["aggregateKind", "aggregateId", "sequence"])
+    .index("by_type_sequence", ["eventType", "sequence"]),
 });

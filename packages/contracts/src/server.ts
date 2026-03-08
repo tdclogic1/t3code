@@ -1,5 +1,5 @@
 import { Schema } from "effect";
-import { IsoDateTime, TrimmedNonEmptyString } from "./baseSchemas";
+import { IsoDateTime, NonNegativeInt, TrimmedNonEmptyString } from "./baseSchemas";
 import { KeybindingRule, ResolvedKeybindingsConfig } from "./keybindings";
 import { EditorId } from "./editor";
 import { ProviderKind } from "./orchestration";
@@ -69,3 +69,16 @@ export const ServerConfigUpdatedPayload = Schema.Struct({
   providers: ServerProviderStatuses,
 });
 export type ServerConfigUpdatedPayload = typeof ServerConfigUpdatedPayload.Type;
+
+export const ServerKpiTokenSource = Schema.Literals(["runtime-events", "message-estimate"]);
+export type ServerKpiTokenSource = typeof ServerKpiTokenSource.Type;
+
+export const ServerKpiSummary = Schema.Struct({
+  projectCount: NonNegativeInt,
+  linesOfCode: NonNegativeInt,
+  tokensUsed: NonNegativeInt,
+  teamMembers: NonNegativeInt,
+  tokenSource: ServerKpiTokenSource,
+  measuredAt: IsoDateTime,
+});
+export type ServerKpiSummary = typeof ServerKpiSummary.Type;

@@ -3,7 +3,8 @@ export type PageMetadataKey =
   | "chatThread"
   | "settings"
   | "smeApps"
-  | "businessSkills";
+  | "businessSkills"
+  | "kpiDashboard";
 
 export interface PageMetadataEntry {
   readonly title: string;
@@ -76,6 +77,20 @@ export const PAGE_METADATA: Record<PageMetadataKey, PageMetadataEntry> = {
       "What task list should we follow to build skills in each category?",
     ],
   },
+  kpiDashboard: {
+    title: "T3 KPI Dashboard | DrBios",
+    description:
+      "Operational KPI dashboard for project count, lines of code, token usage, and team size in T3.",
+    summary:
+      "Internal KPI dashboard showing live engineering and usage totals across active T3 projects.",
+    topics: ["kpi dashboard", "project analytics", "token usage", "engineering metrics"],
+    skills: ["operational reporting", "team tracking", "delivery oversight"],
+    likelyQuestions: [
+      "How many active projects are in T3 right now?",
+      "How many lines of code exist across current project workspaces?",
+      "How many tokens have we used recently?",
+    ],
+  },
 };
 
 const PATH_TO_METADATA_KEY: Record<string, PageMetadataKey> = {
@@ -83,6 +98,7 @@ const PATH_TO_METADATA_KEY: Record<string, PageMetadataKey> = {
   "/settings": "settings",
   "/sme-apps": "smeApps",
   "/business-skills": "businessSkills",
+  "/kpi-dashboard": "kpiDashboard",
 };
 
 export function resolvePageMetadataKey(pathname: string): PageMetadataKey | null {
