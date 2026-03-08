@@ -312,15 +312,39 @@ export const createServer = Effect.fn(function* (): Effect.fn.Return<
   const normalizeDispatchCommand = Effect.fnUntraced(function* (input: {
     readonly command: ClientOrchestrationCommand;
   }) {
-    const normalizeProjectWorkspaceRoot = Effect.fnUntraced(function* (workspaceRoot: string) {
-      const normalizedWorkspaceRoot = path.resolve(yield* expandHomePath(workspaceRoot.trim()));
-      const workspaceStat = yield* fileSystem
+    const normalizeProjectWorkspaceRoot = Effect.fnUntraced(function* (params: {
+      readonly workspaceRoot: string;
+      readonly createIfMissing?: boolean;
+    }) {
+      const createIfMissing = params.createIfMissing ?? false;
+      const normalizedWorkspaceRoot = path.resolve(
+        yield* expandHomePath(params.workspaceRoot.trim()),
+      );
+      let workspaceStat = yield* fileSystem
         .stat(normalizedWorkspaceRoot)
         .pipe(Effect.catch(() => Effect.succeed(null)));
       if (!workspaceStat) {
-        return yield* new RouteRequestError({
-          message: `Project directory does not exist: ${normalizedWorkspaceRoot}`,
-        });
+        if (!createIfMissing) {
+          return yield* new RouteRequestError({
+            message: `Project directory does not exist: ${normalizedWorkspaceRoot}`,
+          });
+        }
+        yield* fileSystem.makeDirectory(normalizedWorkspaceRoot, { recursive: true }).pipe(
+          Effect.mapError(
+            () =>
+              new RouteRequestError({
+                message: `Failed to create project directory: ${normalizedWorkspaceRoot}`,
+              }),
+          ),
+        );
+        workspaceStat = yield* fileSystem
+          .stat(normalizedWorkspaceRoot)
+          .pipe(Effect.catch(() => Effect.succeed(null)));
+        if (!workspaceStat) {
+          return yield* new RouteRequestError({
+            message: `Project directory does not exist: ${normalizedWorkspaceRoot}`,
+          });
+        }
       }
       if (workspaceStat.type !== "Directory") {
         return yield* new RouteRequestError({
@@ -333,7 +357,10 @@ export const createServer = Effect.fn(function* (): Effect.fn.Return<
     if (input.command.type === "project.create") {
       return {
         ...input.command,
-        workspaceRoot: yield* normalizeProjectWorkspaceRoot(input.command.workspaceRoot),
+        workspaceRoot: yield* normalizeProjectWorkspaceRoot({
+          workspaceRoot: input.command.workspaceRoot,
+          createIfMissing: true,
+        }),
       } satisfies OrchestrationCommand;
     }
 
@@ -343,7 +370,9 @@ export const createServer = Effect.fn(function* (): Effect.fn.Return<
     ) {
       return {
         ...input.command,
-        workspaceRoot: yield* normalizeProjectWorkspaceRoot(input.command.workspaceRoot),
+        workspaceRoot: yield* normalizeProjectWorkspaceRoot({
+          workspaceRoot: input.command.workspaceRoot,
+        }),
       } satisfies OrchestrationCommand;
     }
 
