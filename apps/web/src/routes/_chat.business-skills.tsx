@@ -132,7 +132,7 @@ function BusinessSkillsRouteView() {
                   Business Functions, Live Skill Libraries, Favorites, and Highest Rated Skills
                 </h1>
                 <p className="max-w-3xl text-sm leading-relaxed text-muted-foreground">
-                  Sales, Operations, and Accounting & Finance are now live skill libraries. Every
+                  Sales, Operations, Accounting & Finance, and IT are now live skill libraries. Every
                   skill is analyzed for usefulness, complexity, and specificity so you can see the
                   highest-rated work across categories, while still keeping a build backlog for the
                   rest of the business-function map.
@@ -148,7 +148,7 @@ function BusinessSkillsRouteView() {
                 <MetricCard
                   label="Live libraries"
                   value={LIVE_LIBRARY_COUNT}
-                  description="Sales, Operations, and Accounting & Finance are now seeded."
+                  description="Sales, Operations, Accounting & Finance, and IT are now seeded."
                 />
                 <MetricCard
                   label="Live skill cards"

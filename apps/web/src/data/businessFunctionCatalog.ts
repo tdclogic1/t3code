@@ -1,4 +1,5 @@
 import { ACCOUNTING_FINANCE_SKILL_TOTAL } from "./accountingFinanceSkillCatalog";
+import { IT_SKILL_TOTAL } from "./itSkillCatalog";
 import { OPERATIONS_SKILL_TOTAL } from "./operationsSkillCatalog";
 import { SALES_SKILL_TOTAL } from "./salesSkillCatalog";
 
@@ -251,6 +252,62 @@ const ACCOUNTING_FINANCE_CATEGORY: BusinessFunctionCategory = {
   ],
 };
 
+const IT_CATEGORY: BusinessFunctionCategory = {
+  slug: "it",
+  name: "IT",
+  source: "core",
+  status: "live",
+  summary:
+    "Support tickets, access workflows, endpoint lifecycle, incident response, and change governance.",
+  currentSkillCount: IT_SKILL_TOTAL,
+  targetSkillCount: 65,
+  owners: ["IT manager", "Help desk lead", "Security admin", "Systems administrator"],
+  workflowTracks: [
+    "Ticket triage and knowledge reuse",
+    "Access provisioning and offboarding",
+    "Endpoint and lifecycle management",
+    "Incident communication and response",
+  ],
+  keySystems: ["Jira Service Management", "Okta", "Google Workspace", "MDM", "CMDB"],
+  tasks: [
+    {
+      phase: "Workflow Mapping",
+      title: "Group IT skills into support, access, endpoint, incident, and change lanes",
+      deliverable:
+        "A lane model that keeps service desk and infrastructure workflows connected without blending ownership boundaries.",
+    },
+    {
+      phase: "Data & Systems",
+      title: "Define the shared IT entity model",
+      deliverable:
+        "A contract for tickets, identities, entitlements, devices, incidents, and change records across IT operations.",
+    },
+    {
+      phase: "Skill Pack",
+      title: "Pick the first production IT pack",
+      deliverable:
+        "A ranked first wave focused on ticket triage, access flows, and incident communication where operational payoff is immediate.",
+    },
+    {
+      phase: "Spec Writing",
+      title: "Expand IT cards into implementation-ready specs",
+      deliverable:
+        "Per-skill specs with triggers, required evidence, integration boundaries, KPI targets, and operator guardrails.",
+    },
+    {
+      phase: "MVP Build",
+      title: "Ship the shared IT runtime",
+      deliverable:
+        "Reusable state and workflows for support routing, identity actions, endpoint remediation, and reliability follow-through.",
+    },
+    {
+      phase: "Pilot",
+      title: "Pilot the first IT pack with one support pod",
+      deliverable:
+        "A scorecard measuring first-response time, access turnaround, endpoint compliance recovery, and incident communication quality.",
+    },
+  ],
+};
 const PLANNED_CATEGORIES = [
   {
     slug: "distribution",
@@ -308,25 +365,6 @@ const PLANNED_CATEGORIES = [
     firstWave: "campaign briefs, content approvals, and performance summarization",
     pilotMotion:
       "Pilot with one demand-gen team and measure launch time, approval latency, and lead-quality feedback from sales.",
-  },
-  {
-    slug: "it",
-    name: "IT",
-    source: "core",
-    summary:
-      "Support tickets, asset lifecycle, access management, incident handling, and internal service reliability workflows.",
-    targetSkillCount: 65,
-    owners: ["IT manager", "Help desk lead", "Security admin", "Systems administrator"],
-    workflowTracks: [
-      "Ticket triage and knowledge reuse",
-      "Access provisioning and offboarding",
-      "Asset and lifecycle management",
-      "Incident communication and response",
-    ],
-    keySystems: ["Jira Service Management", "Okta", "Google Workspace", "MDM", "CMDB"],
-    firstWave: "ticket triage, access requests, and incident-response coordination",
-    pilotMotion:
-      "Pilot with internal IT support and measure first-response time, ticket deflection, and access-request turnaround.",
   },
   {
     slug: "development",
@@ -467,6 +505,7 @@ export const BUSINESS_FUNCTION_CATALOG: ReadonlyArray<BusinessFunctionCategory> 
   SALES_CATEGORY,
   OPERATIONS_CATEGORY,
   ACCOUNTING_FINANCE_CATEGORY,
+  IT_CATEGORY,
   ...PLANNED_CATEGORIES.map((category) => {
     const tasks = createPlannedTasks(category);
     return {

@@ -257,20 +257,16 @@ export const launchDetached = (launch: EditorLaunch) =>
     });
   });
 
-const make = Effect.gen(function* () {
-  const open = yield* Effect.tryPromise({
-    try: () => import("open"),
-    catch: (cause) => new OpenError({ message: "failed to load browser opener", cause }),
-  });
-
-  return {
-    openBrowser: (target) =>
-      Effect.tryPromise({
-        try: () => open.default(target),
-        catch: (cause) => new OpenError({ message: "Browser auto-open failed", cause }),
-      }),
-    openInEditor: (input) => Effect.flatMap(resolveEditorLaunch(input), launchDetached),
-  } satisfies OpenShape;
-});
+const make = Effect.succeed({
+  openBrowser: (target) =>
+    Effect.tryPromise({
+      try: async () => {
+        const open = await import("open");
+        await open.default(target);
+      },
+      catch: (cause) => new OpenError({ message: "Browser auto-open failed", cause }),
+    }),
+  openInEditor: (input) => Effect.flatMap(resolveEditorLaunch(input), launchDetached),
+} satisfies OpenShape);
 
 export const OpenLive = Layer.effect(Open, make);

@@ -3,6 +3,7 @@ import {
   ACCOUNTING_FINANCE_SKILL_CATEGORIES,
   ACCOUNTING_FINANCE_SKILL_TOTAL,
 } from "./accountingFinanceSkillCatalog";
+import { IT_SKILL_CATALOG, IT_SKILL_CATEGORIES, IT_SKILL_TOTAL } from "./itSkillCatalog";
 import {
   OPERATIONS_SKILL_CATALOG,
   OPERATIONS_SKILL_CATEGORIES,
@@ -53,6 +54,15 @@ export const LIVE_SKILL_LIBRARIES: Record<string, LiveFunctionSkillLibrary> = {
     categories: ACCOUNTING_FINANCE_SKILL_CATEGORIES,
     total: ACCOUNTING_FINANCE_SKILL_TOTAL,
     skills: ACCOUNTING_FINANCE_SKILL_CATALOG,
+  },
+  it: {
+    functionSlug: "it",
+    functionName: "IT",
+    summary:
+      "IT workflows across support triage, access management, endpoint lifecycle, incident response, and change governance.",
+    categories: IT_SKILL_CATEGORIES,
+    total: IT_SKILL_TOTAL,
+    skills: IT_SKILL_CATALOG,
   },
 };
 
