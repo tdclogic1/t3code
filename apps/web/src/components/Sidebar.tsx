@@ -21,6 +21,7 @@ import { useMutation, useQueries, useQuery, useQueryClient } from "@tanstack/rea
 import { useNavigate, useParams } from "@tanstack/react-router";
 import { useAppSettings } from "../appSettings";
 import { isElectron } from "../env";
+import { resolveWsHttpOrigin } from "../wsUrl";
 import { APP_STAGE_LABEL } from "../branding";
 import { newCommandId, newProjectId, newThreadId } from "../lib/utils";
 import { useStore } from "../store";
@@ -220,21 +221,30 @@ function T3Wordmark() {
  * sources WsTransport uses, converting ws(s) to http(s).
  */
 function getServerHttpOrigin(): string {
-  const bridgeUrl = window.desktopBridge?.getWsUrl();
-  const envUrl = import.meta.env.VITE_WS_URL as string | undefined;
-  const wsUrl =
-    bridgeUrl && bridgeUrl.length > 0
-      ? bridgeUrl
-      : envUrl && envUrl.length > 0
-        ? envUrl
-        : `ws://${window.location.hostname}:${window.location.port}`;
-  // Parse to extract just the origin, dropping path/query (e.g. ?token=…)
-  const httpUrl = wsUrl.replace(/^wss:/, "https:").replace(/^ws:/, "http:");
+  return resolveWsHttpOrigin();
+}
+
+function normalizeProjectPathInput(rawInput: string): string {
+  const trimmed = rawInput.trim();
+  if (trimmed.length === 0) return "";
+
+  const unquoted = trimmed.replace(/^"(.*)"$/, "$1").replace(/^'(.*)'$/, "$1");
+  const isFileUrl = /^file:\/\//i.test(unquoted);
+  const withoutScheme = isFileUrl ? unquoted.replace(/^file:\/\//i, "") : unquoted;
+
+  let decoded = withoutScheme;
   try {
-    return new URL(httpUrl).origin;
+    decoded = decodeURIComponent(withoutScheme);
   } catch {
-    return httpUrl;
+    // Keep raw input when decoding fails.
   }
+
+  // file:///C:/Users/... -> C:/Users/...
+  if (/^\/[a-zA-Z]:[\\/]/.test(decoded)) {
+    return decoded.slice(1);
+  }
+
+  return decoded;
 }
 
 const serverHttpOrigin = getServerHttpOrigin();
@@ -495,7 +505,7 @@ export default function Sidebar() {
 
   const addProjectFromPath = useCallback(
     async (rawCwd: string) => {
-      const cwd = rawCwd.trim();
+      const cwd = normalizeProjectPathInput(rawCwd);
       if (!cwd || isAddingProject) return;
       const api = readNativeApi();
       if (!api) return;
@@ -1720,3 +1730,4 @@ export default function Sidebar() {
     </>
   );
 }
+

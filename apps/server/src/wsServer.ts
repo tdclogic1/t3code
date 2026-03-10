@@ -160,6 +160,36 @@ function toPosixRelativePath(input: string): string {
   return input.replaceAll("\\", "/");
 }
 
+function normalizeWorkspaceRootInput(rawInput: string): string {
+  const trimmed = rawInput.trim();
+  if (trimmed.length === 0) return "";
+
+  const unquoted = trimmed.replace(/^"(.*)"$/, "$1").replace(/^'(.*)'$/, "$1");
+  if (!/^file:\/\//i.test(unquoted)) {
+    return unquoted;
+  }
+
+  try {
+    const parsed = new URL(unquoted);
+    if (parsed.protocol !== "file:") return unquoted;
+
+    const decodedPathname = decodeURIComponent(parsed.pathname);
+    if (process.platform === "win32") {
+      if (parsed.hostname.length > 0) {
+        const normalizedSharePath = decodedPathname.replaceAll("/", "\\");
+        return `\\\\${parsed.hostname}${normalizedSharePath}`;
+      }
+      return decodedPathname
+        .replace(/^\/([a-zA-Z]:[\\/])/, "$1")
+        .replaceAll("/", "\\");
+    }
+
+    return decodedPathname;
+  } catch {
+    return unquoted;
+  }
+}
+
 function resolveWorkspaceWritePath(params: {
   workspaceRoot: string;
   relativePath: string;
@@ -319,7 +349,7 @@ export const createServer = Effect.fn(function* (): Effect.fn.Return<
     }) {
       const createIfMissing = params.createIfMissing ?? false;
       const normalizedWorkspaceRoot = path.resolve(
-        yield* expandHomePath(params.workspaceRoot.trim()),
+        yield* expandHomePath(normalizeWorkspaceRootInput(params.workspaceRoot)),
       );
       let workspaceStat = yield* fileSystem
         .stat(normalizedWorkspaceRoot)
